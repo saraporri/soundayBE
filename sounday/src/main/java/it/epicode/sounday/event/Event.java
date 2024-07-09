@@ -4,11 +4,10 @@ package it.epicode.sounday.event;
 
 
 
-import it.epicode.sounday.artist.Artist;
+import it.epicode.sounday.user.User;
 import jakarta.persistence.*;
 
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
@@ -26,7 +25,7 @@ public class Event {
 
     @ManyToOne
     @JoinColumn(name = "artist_id")
-    private Artist artist;
+    private User artist;
 
     private Integer participantsCount;
     private Integer likesCount;
