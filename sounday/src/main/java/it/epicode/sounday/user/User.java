@@ -1,15 +1,22 @@
 package it.epicode.sounday.user;
 
+import it.epicode.sounday.security.Roles;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder(setterPrefix = "with")
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -20,18 +27,9 @@ public class User {
     private String email;
     private String firstName;
     private String lastName;
-    private String role; // Fan or Artist
+    @ManyToMany(fetch = FetchType.EAGER)
+    private final List<Roles> roles = new ArrayList<>();
     private LocalDate registrationDate;
 
-    // Default constructor
-    public User() {
-    }
-
-    // Constructor with parameters
-    public User(String username, String email, String password) {
-        this.username = username;
-        this.email = email;
-        this.password = password;
-    }
     // Getters and Setters
 }
