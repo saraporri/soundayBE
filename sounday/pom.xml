@@ -8,11 +8,11 @@
 		<version>3.3.0</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>it.epicode</groupId>
-	<artifactId>libreria </artifactId>
+	<groupId>com.sara</groupId>
+	<artifactId>capstone</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>libreria </name>
-	<description>Gestione libreria </description>
+	<name>capstone</name>
+	<description>capstone project management</description>
 	<properties>
 		<java.version>22</java.version>
 	</properties>
@@ -95,6 +95,7 @@
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
+				<version>3.3.0</version>
 				<configuration>
 					<excludes>
 						<exclude>
@@ -106,5 +107,6 @@
 			</plugin>
 		</plugins>
 	</build>
+
 
 </project>

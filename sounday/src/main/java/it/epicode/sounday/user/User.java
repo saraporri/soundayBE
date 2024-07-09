@@ -1,7 +1,9 @@
 package it.epicode.sounday.user;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 
 import java.time.LocalDate;
@@ -21,5 +23,15 @@ public class User {
     private String role; // Fan or Artist
     private LocalDate registrationDate;
 
+    // Default constructor
+    public User() {
+    }
+
+    // Constructor with parameters
+    public User(String username, String email, String password) {
+        this.username = username;
+        this.email = email;
+        this.password = password;
+    }
     // Getters and Setters
 }

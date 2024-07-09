@@ -1,12 +1,10 @@
 package it.epicode.sounday.security;
-
-import it.epicode.sounday.security.JwtUtils;
+import it.epicode.sounday.security.payload.MessageResponse;
 import it.epicode.sounday.security.payload.JwtResponse;
 import it.epicode.sounday.security.payload.LoginRequest;
 import it.epicode.sounday.user.User;
 import it.epicode.sounday.user.UserRepository;
 import it.epicode.sounday.user.UserRequestDTO;
-import it.epicode.sounday.user.UserResponseDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -16,9 +14,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @RestController
