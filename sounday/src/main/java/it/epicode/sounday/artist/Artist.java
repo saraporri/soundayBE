@@ -13,8 +13,6 @@ public class Artist {
     private Long id; // Same as User ID
 
     private String stageName;
-    private String musicGenre;
-    private Integer followersCount;
     private LocalDateTime profileUpdated;
 
     // Getters and Setters

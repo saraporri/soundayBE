@@ -16,7 +16,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder(setterPrefix = "with")
 public class Roles {
-    public static final String ROLES_ADMIN = "ADMIN";
+    public static final String ROLES_ADMIN = "ARTIST";
     public static final String ROLES_USER = "USER";
 
     @Id

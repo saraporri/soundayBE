@@ -30,6 +30,7 @@ public class User {
     @ManyToMany(fetch = FetchType.EAGER)
     private final List<Roles> roles = new ArrayList<>();
     private LocalDate registrationDate;
+    private Integer followersCount;
 
     // Getters and Setters
 }

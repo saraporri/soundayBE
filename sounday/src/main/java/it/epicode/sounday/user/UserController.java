@@ -1,36 +1,90 @@
 package it.epicode.sounday.user;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import it.epicode.sounday.security.*;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
+import jakarta.persistence.EntityNotFoundException;
+
 
 @RestController
 @RequestMapping("/api/users")
+@RequiredArgsConstructor
 public class UserController {
-    @Autowired
-    private UserService userService;
+
+    private final UserService user;
+
+    @PostMapping("/register")
+    public ResponseEntity<RegisteredUserDTO> register(@RequestBody @Validated RegisterUserModel model, BindingResult validator){
+        if (validator.hasErrors()) {
+            throw new ApiValidationException(validator.getAllErrors());
+        }
+        var registeredUser = user.register(
+                RegisterUserDTO.builder()
+                        .withFirstName(model.firstName())
+                        .withLastName(model.lastName())
+                        .withUsername(model.username())
+                        .withEmail(model.email())
+                        .withPassword(model.password())
+                        .build());
+
+        return  new ResponseEntity<> (registeredUser, HttpStatus.OK);
+    }
+
+    @CrossOrigin(origins = "http://localhost:4200")
+    @PostMapping("/login")
+    public ResponseEntity<LoginResponseDTO> login(@RequestBody @Validated LoginModel model, BindingResult validator) {
+        if (validator.hasErrors()) {
+            throw  new ApiValidationException(validator.getAllErrors());
+        }
+        return new ResponseEntity<>(user.login(model.username(), model.password()).orElseThrow(), HttpStatus.OK);
+    }
+
+    @PostMapping("/registerArtist")
+    public ResponseEntity<RegisteredUserDTO> registerArtist(@RequestBody RegisterUserDTO registerUser){
+    return ResponseEntity.ok(user.registerAdmin(registerUser));
+    }
+
+    @PutMapping("/update/{id}")
+    public ResponseEntity<RegisteredUserDTO> updateUser(@PathVariable Long id, @RequestBody @Validated RegisterUserDTO updateUserDTO, BindingResult validator){
+        if (validator.hasErrors()) {
+            throw new ApiValidationException(validator.getAllErrors());
+        }
+        RegisteredUserDTO updatedUser = user.updateUser(id, updateUserDTO);
+        return ResponseEntity.ok(updatedUser);
+    }
+
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<String> deleteUser(@PathVariable Long id) {
+        try {
+            String result = user.deleteUserById(id);
+            return ResponseEntity.ok(result);
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+
 
     @GetMapping
-    public List<User> getAllUsers() {
-        return userService.getAllUsers();
+    public ResponseEntity<List<RegisteredUserDTO>> getAllUsers() {
+        List<RegisteredUserDTO> users = user.getAllUsers();
+        return ResponseEntity.ok(users);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<User> getUserById(@PathVariable Long id) {
-        Optional<User> user = userService.getUserById(id);
-        return user.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
-    }
-
-    @PostMapping
-    public User createUser(@RequestBody User user) {
-        return userService.createUser(user);
-    }
-
-    @DeleteMapping("/{id}")
-    public void deleteUser(@PathVariable Long id) {
-        userService.deleteUser(id);
+    public ResponseEntity<RegisteredUserDTO> getUserById(@PathVariable Long id) {
+        try {
+            RegisteredUserDTO users = user.getUserById(id);
+            return ResponseEntity.ok(users);
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.notFound().build();
+        }
     }
 }
