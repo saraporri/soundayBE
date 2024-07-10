@@ -3,10 +3,12 @@ package it.epicode.sounday.event;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import it.epicode.sounday.security.ApiValidationException;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
@@ -25,8 +27,8 @@ public class EventController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Event> getEventById(@PathVariable Long id) {
-        Optional<Event> event = eventService.getEventById(id);
+    public ResponseEntity<EventResponseDTO> getEventById(@PathVariable Long id) {
+        Optional<EventResponseDTO> event = eventService.getEventById(id);
         return event.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
@@ -39,6 +41,12 @@ public class EventController {
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
+
+    @PutMapping("/update/{id}")
+    public ResponseEntity<EventResponseDTO> updateEvent(@PathVariable Long id, @RequestBody @Validated EventRequestDTO updateEventDTO) {
+        EventResponseDTO updatedEvent = eventService.updateEvent(id, updateEventDTO);
+        return ResponseEntity.ok(updatedEvent);
+    }
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteEvent(@PathVariable Long id) {
         try {
