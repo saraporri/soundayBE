@@ -1,5 +1,6 @@
 package it.epicode.sounday.user;
 
+import it.epicode.sounday.event.Event;
 import it.epicode.sounday.security.Roles;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -8,7 +9,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,8 +29,26 @@ public class User {
     private String lastName;
     @ManyToMany(fetch = FetchType.EAGER)
     private final List<Roles> roles = new ArrayList<>();
-    private LocalDate registrationDate;
-    private Integer followersCount;
+    private Integer followersCount; //artist
+
+    @OneToMany
+    private List<Event> likeEvents;
+
+    @OneToMany
+    private List<User> likeArtists;
+
+
+    @OneToMany
+    private List<Event> events; //artist
+
+    @OneToMany
+    private List<Event> partecipation;
+
+
+
+
+
+
 
     // Getters and Setters
 }

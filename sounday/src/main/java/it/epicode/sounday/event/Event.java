@@ -29,7 +29,6 @@ public class Event {
 
     private Integer participantsCount;
     private Integer likesCount;
-    private LocalDateTime createdDate;
 
     // Getters and Setters
 }

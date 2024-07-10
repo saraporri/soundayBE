@@ -8,10 +8,10 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
-import java.util.Optional;
+import java.util.Map;
 import jakarta.persistence.EntityNotFoundException;
-
 
 @RestController
 @RequestMapping("/api/users")
@@ -21,7 +21,7 @@ public class UserController {
     private final UserService user;
 
     @PostMapping("/register")
-    public ResponseEntity<RegisteredUserDTO> register(@RequestBody @Validated RegisterUserModel model, BindingResult validator){
+    public ResponseEntity<RegisteredUserDTO> register(@RequestBody @Validated RegisterUserModel model, BindingResult validator) {
         if (validator.hasErrors()) {
             throw new ApiValidationException(validator.getAllErrors());
         }
@@ -34,25 +34,25 @@ public class UserController {
                         .withPassword(model.password())
                         .build());
 
-        return  new ResponseEntity<> (registeredUser, HttpStatus.OK);
+        return new ResponseEntity<>(registeredUser, HttpStatus.OK);
     }
 
     @CrossOrigin(origins = "http://localhost:4200")
     @PostMapping("/login")
     public ResponseEntity<LoginResponseDTO> login(@RequestBody @Validated LoginModel model, BindingResult validator) {
         if (validator.hasErrors()) {
-            throw  new ApiValidationException(validator.getAllErrors());
+            throw new ApiValidationException(validator.getAllErrors());
         }
         return new ResponseEntity<>(user.login(model.username(), model.password()).orElseThrow(), HttpStatus.OK);
     }
 
     @PostMapping("/registerArtist")
-    public ResponseEntity<RegisteredUserDTO> registerArtist(@RequestBody RegisterUserDTO registerUser){
-    return ResponseEntity.ok(user.registerAdmin(registerUser));
+    public ResponseEntity<RegisteredUserDTO> registerArtist(@RequestBody RegisterUserDTO registerUser) {
+        return ResponseEntity.ok(user.registerAdmin(registerUser));
     }
 
     @PutMapping("/update/{id}")
-    public ResponseEntity<RegisteredUserDTO> updateUser(@PathVariable Long id, @RequestBody @Validated RegisterUserDTO updateUserDTO, BindingResult validator){
+    public ResponseEntity<RegisteredUserDTO> updateUser(@PathVariable Long id, @RequestBody @Validated RegisterUserDTO updateUserDTO, BindingResult validator) {
         if (validator.hasErrors()) {
             throw new ApiValidationException(validator.getAllErrors());
         }
@@ -70,8 +70,6 @@ public class UserController {
         }
     }
 
-
-
     @GetMapping
     public ResponseEntity<List<RegisteredUserDTO>> getAllUsers() {
         List<RegisteredUserDTO> users = user.getAllUsers();
@@ -85,6 +83,48 @@ public class UserController {
             return ResponseEntity.ok(users);
         } catch (EntityNotFoundException e) {
             return ResponseEntity.notFound().build();
+        }
+    }
+
+    @PostMapping("/likeEvent/{userId}/{eventId}")
+    public ResponseEntity<?> likeEvent(@PathVariable Long userId, @PathVariable Long eventId) {
+        try {
+            user.likeEvent(userId, eventId);
+            Map<String, String> response = new HashMap<>();
+            response.put("message", "Event liked successfully");
+            return ResponseEntity.ok(response);
+        } catch (EntityNotFoundException e) {
+            Map<String, String> response = new HashMap<>();
+            response.put("message", e.getMessage());
+            return ResponseEntity.badRequest().body(response);
+        }
+    }
+
+    @PostMapping("/participateEvent/{userId}/{eventId}")
+    public ResponseEntity<?> participateInEvent(@PathVariable Long userId, @PathVariable Long eventId) {
+        try {
+            user.participateInEvent(userId, eventId);
+            Map<String, String> response = new HashMap<>();
+            response.put("message", "Participation in event successful");
+            return ResponseEntity.ok(response);
+        } catch (EntityNotFoundException e) {
+            Map<String, String> response = new HashMap<>();
+            response.put("message", e.getMessage());
+            return ResponseEntity.badRequest().body(response);
+        }
+    }
+
+    @PostMapping("/likeArtist/{userId}/{artistId}")
+    public ResponseEntity<?> likeArtist(@PathVariable Long userId, @PathVariable Long artistId) {
+        try {
+            user.likeArtist(userId, artistId);
+            Map<String, String> response = new HashMap<>();
+            response.put("message", "Artist liked successfully");
+            return ResponseEntity.ok(response);
+        } catch (EntityNotFoundException e) {
+            Map<String, String> response = new HashMap<>();
+            response.put("message", e.getMessage());
+            return ResponseEntity.badRequest().body(response);
         }
     }
 }

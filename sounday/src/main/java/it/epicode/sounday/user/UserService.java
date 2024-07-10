@@ -1,5 +1,7 @@
 package it.epicode.sounday.user;
 
+import it.epicode.sounday.event.Event;
+import it.epicode.sounday.event.EventRepository;
 import it.epicode.sounday.security.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,24 +18,22 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import java.util.NoSuchElementException;
-
-
 import jakarta.persistence.EntityNotFoundException;
 import java.util.stream.Collectors;
-@Service
 
+@Service
 @Slf4j
 @RequiredArgsConstructor
 public class UserService {
     private final PasswordEncoder encoder;
     private final UserRepository usersRepository;
+    private final EventRepository eventRepository; // Ensure you have an EventRepository
     private final RolesRepository rolesRepository;
     private final AuthenticationManager auth;
     private final JwtUtils jwt;
 
     @Value("${spring.servlet.multipart.max-file-size}")
     private String maxFileSize;
-
 
     public Optional<LoginResponseDTO> login(String username, String password) {
         try {
@@ -66,11 +66,11 @@ public class UserService {
         }
     }
 
-    public RegisteredUserDTO register(RegisterUserDTO register){
-        if(usersRepository.existsByUsername(register.getUsername())){
+    public RegisteredUserDTO register(RegisterUserDTO register) {
+        if (usersRepository.existsByUsername(register.getUsername())) {
             throw new EntityExistsException("Utente gia' esistente");
         }
-        if(usersRepository.existsByEmail(register.getEmail())){
+        if (usersRepository.existsByEmail(register.getEmail())) {
             throw new EntityExistsException("Email gia' registrata");
         }
         Roles roles = rolesRepository.findById(Roles.ROLES_USER).get();
@@ -84,16 +84,14 @@ public class UserService {
         BeanUtils.copyProperties(u, response);
         response.setRoles(List.of(roles));
 
-
         return response;
-
     }
 
-    public RegisteredUserDTO registerAdmin(RegisterUserDTO register){
-        if(usersRepository.existsByUsername(register.getUsername())){
+    public RegisteredUserDTO registerAdmin(RegisterUserDTO register) {
+        if (usersRepository.existsByUsername(register.getUsername())) {
             throw new EntityExistsException("Utente gia' esistente");
         }
-        if(usersRepository.existsByEmail(register.getEmail())){
+        if (usersRepository.existsByEmail(register.getEmail())) {
             throw new EntityExistsException("Email gia' registrata");
         }
         Roles roles = rolesRepository.findById(Roles.ROLES_ADMIN).get();
@@ -107,10 +105,7 @@ public class UserService {
         response.setRoles(List.of(roles));
         System.out.println(response);
         return response;
-
     }
-
-
 
     public long getMaxFileSizeInBytes() {
         String[] parts = maxFileSize.split("(?i)(?<=[0-9])(?=[a-z])");
@@ -129,7 +124,6 @@ public class UserService {
         }
         return size;
     }
-
 
     public RegisteredUserDTO updateUser(Long id, RegisterUserDTO updateUserDTO) {
         if (!usersRepository.existsById(id)) {
@@ -174,5 +168,44 @@ public class UserService {
         BeanUtils.copyProperties(user, dto);
         dto.setRoles(user.getRoles());
         return dto;
+    }
+
+    public void likeEvent(Long userId, Long eventId) {
+        User user = usersRepository.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException("User not found with id: " + userId));
+        Event event = eventRepository.findById(eventId)
+                .orElseThrow(() -> new EntityNotFoundException("Event not found with id: " + eventId));
+
+        event.setLikesCount(event.getLikesCount() + 1);
+        eventRepository.save(event);
+
+        user.getLikeEvents().add(event);
+        usersRepository.save(user);
+    }
+
+    public void participateInEvent(Long userId, Long eventId) {
+        User user = usersRepository.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException("User not found with id: " + userId));
+        Event event = eventRepository.findById(eventId)
+                .orElseThrow(() -> new EntityNotFoundException("Event not found with id: " + eventId));
+
+        event.setParticipantsCount(event.getParticipantsCount() + 1);
+        eventRepository.save(event);
+
+        user.getPartecipation().add(event);
+        usersRepository.save(user);
+    }
+
+    public void likeArtist(Long userId, Long artistId) {
+        User user = usersRepository.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException("User not found with id: " + userId));
+        User artist = usersRepository.findById(artistId)
+                .orElseThrow(() -> new EntityNotFoundException("Artist not found with id: " + artistId));
+
+        artist.setFollowersCount(artist.getFollowersCount() + 1);
+        usersRepository.save(artist);
+
+        user.getLikeArtists().add(artist);
+        usersRepository.save(user);
     }
 }
