@@ -59,12 +59,12 @@ public class ApplicationSecurityConfig {
                 .cors(Customizer.withDefaults()) // Utilizza la configurazione CORS
                 .authorizeHttpRequests(authorize ->
                                 authorize //CONFIGURAZIONE DELLA PROTEZIONE DEI VARI ENDPOINT
-                                        .requestMatchers("/users/login").permitAll()
-                                        .requestMatchers("/users/registerAdmin").permitAll()
-                                        .requestMatchers(HttpMethod.POST, "/users/register").permitAll()
+                                        .requestMatchers("/api/users/login").permitAll()
+                                        .requestMatchers("/api/users/registerArtist").permitAll()
+                                        .requestMatchers(HttpMethod.POST, "/api/users/register").permitAll()
                                         .requestMatchers(HttpMethod.GET, "/**").permitAll()
-                                        .requestMatchers(HttpMethod.POST, "/**").hasAuthority("ARTIST")
-                                        .requestMatchers(HttpMethod.PATCH, "/users/{id}").authenticated()
+                                        .requestMatchers(HttpMethod.POST, "/api/events").hasAuthority("ARTIST")
+                                        .requestMatchers(HttpMethod.PATCH, "/api/users/{id}").authenticated()
                                         .requestMatchers(HttpMethod.PUT, "/**").hasAuthority("ARTIST")
                                         .requestMatchers(HttpMethod.DELETE, "/**").hasAuthority("ARTIST")
                         //.requestMatchers("/**").authenticated() //TUTTO CIO CHE PUO ESSERE SFUGGITO RICHIEDE L'AUTENTICAZIONE (SERVE A GESTIRE EVENTUALI DIMENTICANZE)

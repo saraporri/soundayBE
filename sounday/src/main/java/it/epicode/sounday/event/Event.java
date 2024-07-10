@@ -9,6 +9,7 @@ import jakarta.persistence.*;
 
 import lombok.Data;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
@@ -20,11 +21,13 @@ public class Event {
 
     private String title;
     private String description;
+    private LocalDate eventDate;
     private LocalDateTime dateTime;
     private String location;
+    //tourPic
 
     @ManyToOne
-    @JoinColumn(name = "artist_id")
+    @JoinColumn(name = "artist_id", referencedColumnName = "id")
     private User artist;
 
     private Integer participantsCount;

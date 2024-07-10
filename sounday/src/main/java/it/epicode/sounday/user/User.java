@@ -14,6 +14,7 @@ import java.util.List;
 
 @Entity
 @Data
+@Table (name = "users")
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder(setterPrefix = "with")
@@ -30,7 +31,8 @@ public class User {
     @ManyToMany(fetch = FetchType.EAGER)
     private final List<Roles> roles = new ArrayList<>();
     private Integer followersCount; //artist
-
+//artistPic
+    //maybe fanPic
     @OneToMany
     private List<Event> likeEvents;
 
