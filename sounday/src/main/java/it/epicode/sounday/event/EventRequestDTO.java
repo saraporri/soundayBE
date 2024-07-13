@@ -12,6 +12,6 @@ public class EventRequestDTO {
     private LocalDate eventDate;
     private String location;
     private Long artistId;
-
+    private String city;
     // Getters and Setters
 }

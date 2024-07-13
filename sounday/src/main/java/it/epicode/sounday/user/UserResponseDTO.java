@@ -1,7 +1,9 @@
 package it.epicode.sounday.user;
 
-import java.time.LocalDate;
+import lombok.Data;
 
+import java.time.LocalDate;
+@Data
 public class UserResponseDTO {
     private Long id;
     private String username;

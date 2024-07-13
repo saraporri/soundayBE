@@ -1,5 +1,6 @@
 package it.epicode.sounday.event;
 
+import it.epicode.sounday.user.UserResponseDTO;
 import lombok.Data;
 
 import java.time.LocalDate;
@@ -10,9 +11,9 @@ public class EventResponseDTO {
     private String title;
     private LocalDateTime dateTime;
     private LocalDate eventDate;
-
+    private String city;
     private String location;
-    private Long artistId;
+    private UserResponseDTO artistId;
     //private Integer participantsCount;
    // private Integer likesCount;
     //private LocalDateTime createdDate;
