@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 public class EventResponseDTO {
     private Long id;
     private String title;
-    private LocalDateTime dateTime;
+    private String dateTime;
     private LocalDate eventDate;
     private String city;
     private String location;

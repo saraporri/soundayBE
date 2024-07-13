@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 @Data
 public class EventRequestDTO {
     private String title;
-    private LocalDateTime dateTime;
+    private String dateTime;
     private LocalDate eventDate;
     private String location;
     private Long artistId;

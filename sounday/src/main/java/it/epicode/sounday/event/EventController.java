@@ -1,9 +1,7 @@
 package it.epicode.sounday.event;
 
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import it.epicode.sounday.security.ApiValidationException;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -12,8 +10,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @RestController
 @RequestMapping("/api/events")
@@ -41,19 +38,22 @@ public class EventController {
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
-
     @PutMapping("/update/{id}")
     public ResponseEntity<EventResponseDTO> updateEvent(@PathVariable Long id, @RequestBody @Validated EventRequestDTO updateEventDTO) {
         EventResponseDTO updatedEvent = eventService.updateEvent(id, updateEventDTO);
         return ResponseEntity.ok(updatedEvent);
     }
+
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteEvent(@PathVariable Long id) {
+    public ResponseEntity<Map<String, String>> deleteEvent(@PathVariable Long id) {
         try {
             eventService.deleteEvent(id);
-            return ResponseEntity.ok("Event with id " + id + " deleted successfully");
+            Map<String, String> response = new HashMap<>();
+            response.put("message", "Event with id " + id + " deleted successfully");
+            return ResponseEntity.ok(response);
         } catch (EntityNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Collections.singletonMap("error", e.getMessage()));
         }
     }
+
 }

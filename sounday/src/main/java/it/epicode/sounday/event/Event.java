@@ -20,7 +20,7 @@ public class Event {
     private Long id;
     private String title;
     private LocalDate eventDate;
-    private LocalDateTime dateTime;
+    private String dateTime;
     private String location;
     private String city;
     //tourPic
