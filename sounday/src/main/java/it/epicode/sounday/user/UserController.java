@@ -48,7 +48,7 @@ public class UserController {
 
     @PostMapping("/registerArtist")
     public ResponseEntity<RegisteredUserDTO> registerArtist(@RequestBody RegisterUserDTO registerUser) {
-        return ResponseEntity.ok(user.registerAdmin(registerUser));
+        return ResponseEntity.ok(user.registerArtist(registerUser));
     }
 
     @PutMapping("/update/{id}")
@@ -84,6 +84,12 @@ public class UserController {
         } catch (EntityNotFoundException e) {
             return ResponseEntity.notFound().build();
         }
+    }
+
+    @GetMapping("/artists")
+    public ResponseEntity<List<RegisteredUserDTO>> getAllArtists() {
+        List<RegisteredUserDTO> artists = user.getAllArtists();
+        return ResponseEntity.ok(artists);
     }
 
     @PostMapping("/likeEvent/{userId}/{eventId}")

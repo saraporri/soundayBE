@@ -7,14 +7,12 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
 @Data
-@Table (name = "users")
+@Table(name = "users")
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder(setterPrefix = "with")
@@ -28,29 +26,21 @@ public class User {
     private String email;
     private String firstName;
     private String lastName;
+
     @ManyToMany(fetch = FetchType.EAGER)
     private final List<Roles> roles = new ArrayList<>();
-    private Integer followersCount; //artist
-//artistPic
-    //maybe fanPic
+
+    private Integer followersCount;
+
+    @OneToMany(mappedBy = "artist")
+    private List<Event> events;
+
     @OneToMany
     private List<Event> likeEvents;
 
     @OneToMany
     private List<User> likeArtists;
 
-
-    @OneToMany
-    private List<Event> events; //artist
-
     @OneToMany
     private List<Event> partecipation;
-
-
-
-
-
-
-
-    // Getters and Setters
 }

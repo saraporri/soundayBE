@@ -27,7 +27,7 @@ import java.util.stream.Collectors;
 public class UserService {
     private final PasswordEncoder encoder;
     private final UserRepository usersRepository;
-    private final EventRepository eventRepository; // Ensure you have an EventRepository
+    private final EventRepository eventRepository;
     private final RolesRepository rolesRepository;
     private final AuthenticationManager auth;
     private final JwtUtils jwt;
@@ -38,10 +38,8 @@ public class UserService {
     public Optional<LoginResponseDTO> login(String username, String password) {
         try {
             var a = auth.authenticate(new UsernamePasswordAuthenticationToken(username, password));
-
             a.getAuthorities();
             SecurityContextHolder.getContext().setAuthentication(a);
-
             var user = usersRepository.findOneByUsername(username).orElseThrow();
             var dto = LoginResponseDTO.builder()
                     .withUser(RegisteredUserDTO.builder()
@@ -55,7 +53,6 @@ public class UserService {
                     .build();
 
             dto.setToken(jwt.generateToken(a));
-
             return Optional.of(dto);
         } catch (NoSuchElementException e) {
             log.error("User not found", e);
@@ -68,42 +65,39 @@ public class UserService {
 
     public RegisteredUserDTO register(RegisterUserDTO register) {
         if (usersRepository.existsByUsername(register.getUsername())) {
-            throw new EntityExistsException("Utente gia' esistente");
+            throw new EntityExistsException("User already exists");
         }
         if (usersRepository.existsByEmail(register.getEmail())) {
-            throw new EntityExistsException("Email gia' registrata");
+            throw new EntityExistsException("Email already registered");
         }
-        Roles roles = rolesRepository.findById(Roles.ROLES_USER).get();
-
-        User u = new User();
-        BeanUtils.copyProperties(register, u);
-        u.setPassword(encoder.encode(register.getPassword()));
-        u.getRoles().add(roles);
-        usersRepository.save(u);
+        Roles roles = rolesRepository.findById(Roles.ROLES_USER).orElseThrow();
+        User user = new User();
+        BeanUtils.copyProperties(register, user);
+        user.setPassword(encoder.encode(register.getPassword()));
+        user.getRoles().add(roles);
+        usersRepository.save(user);
         RegisteredUserDTO response = new RegisteredUserDTO();
-        BeanUtils.copyProperties(u, response);
+        BeanUtils.copyProperties(user, response);
         response.setRoles(List.of(roles));
-
         return response;
     }
 
-    public RegisteredUserDTO registerAdmin(RegisterUserDTO register) {
+    public RegisteredUserDTO registerArtist(RegisterUserDTO register) {
         if (usersRepository.existsByUsername(register.getUsername())) {
-            throw new EntityExistsException("Utente gia' esistente");
+            throw new EntityExistsException("User already exists");
         }
         if (usersRepository.existsByEmail(register.getEmail())) {
-            throw new EntityExistsException("Email gia' registrata");
+            throw new EntityExistsException("Email already registered");
         }
-        Roles roles = rolesRepository.findById(Roles.ROLES_ADMIN).get();
-        User u = new User();
-        BeanUtils.copyProperties(register, u);
-        u.setPassword(encoder.encode(register.getPassword()));
-        u.getRoles().add(roles);
-        usersRepository.save(u);
+        Roles roles = rolesRepository.findById(Roles.ROLES_ADMIN).orElseThrow();
+        User user = new User();
+        BeanUtils.copyProperties(register, user);
+        user.setPassword(encoder.encode(register.getPassword()));
+        user.getRoles().add(roles);
+        usersRepository.save(user);
         RegisteredUserDTO response = new RegisteredUserDTO();
-        BeanUtils.copyProperties(u, response);
+        BeanUtils.copyProperties(user, response);
         response.setRoles(List.of(roles));
-        System.out.println(response);
         return response;
     }
 
@@ -126,10 +120,7 @@ public class UserService {
     }
 
     public RegisteredUserDTO updateUser(Long id, RegisterUserDTO updateUserDTO) {
-        if (!usersRepository.existsById(id)) {
-            throw new EntityNotFoundException("User with id " + id + " not found");
-        }
-        User user = usersRepository.findById(id).get();
+        User user = usersRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("User with id " + id + " not found"));
         if (updateUserDTO.getFirstName() != null) user.setFirstName(updateUserDTO.getFirstName());
         if (updateUserDTO.getLastName() != null) user.setLastName(updateUserDTO.getLastName());
         if (updateUserDTO.getUsername() != null) user.setUsername(updateUserDTO.getUsername());
@@ -162,12 +153,24 @@ public class UserService {
     }
 
     public RegisteredUserDTO getUserById(Long id) {
-        User user = usersRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("User with id " + id + " not found"));
+        User user = usersRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("User with id " + id + " not found"));
         RegisteredUserDTO dto = new RegisteredUserDTO();
         BeanUtils.copyProperties(user, dto);
         dto.setRoles(user.getRoles());
         return dto;
+    }
+
+    public List<RegisteredUserDTO> getAllArtists() {
+        return usersRepository.findAll().stream()
+                .filter(user -> user.getRoles().stream()
+                        .anyMatch(role -> role.getRoleType().equals("ARTIST")))
+                .map(user -> {
+                    RegisteredUserDTO dto = new RegisteredUserDTO();
+                    BeanUtils.copyProperties(user, dto);
+                    dto.setRoles(user.getRoles());
+                    return dto;
+                })
+                .collect(Collectors.toList());
     }
 
     public void likeEvent(Long userId, Long eventId) {

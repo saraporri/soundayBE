@@ -1,15 +1,11 @@
 package it.epicode.sounday.event;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.IOException;
 import java.util.*;
 
 @RestController
@@ -19,8 +15,9 @@ public class EventController {
     private EventService eventService;
 
     @GetMapping
-    public List<Event> getAllEvents() {
-        return eventService.getAllEvents();
+    public ResponseEntity<List<EventResponseDTO>> getAllEvents() {
+        List<EventResponseDTO> events = eventService.getAllEvents();
+        return ResponseEntity.ok(events);
     }
 
     @GetMapping("/{id}")
@@ -30,16 +27,13 @@ public class EventController {
     }
 
     @PostMapping
-    public ResponseEntity<EventResponseDTO> createEvent(@RequestPart("event") String eventJson)throws IOException {
-        ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.registerModule(new JavaTimeModule());
-        EventRequestDTO request = objectMapper.readValue(eventJson, EventRequestDTO.class);
+    public ResponseEntity<EventResponseDTO> createEvent(@RequestBody EventRequestDTO request) {
         EventResponseDTO response = eventService.createEvent(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
-    @PutMapping("/update/{id}")
-    public ResponseEntity<EventResponseDTO> updateEvent(@PathVariable Long id, @RequestBody @Validated EventRequestDTO updateEventDTO) {
+    @PutMapping("/{id}")
+    public ResponseEntity<EventResponseDTO> updateEvent(@PathVariable Long id, @RequestBody EventRequestDTO updateEventDTO) {
         EventResponseDTO updatedEvent = eventService.updateEvent(id, updateEventDTO);
         return ResponseEntity.ok(updatedEvent);
     }
@@ -55,5 +49,4 @@ public class EventController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Collections.singletonMap("error", e.getMessage()));
         }
     }
-
 }
