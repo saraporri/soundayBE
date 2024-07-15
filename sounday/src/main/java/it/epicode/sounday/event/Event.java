@@ -4,6 +4,7 @@ import it.epicode.sounday.user.User;
 import jakarta.persistence.*;
 import lombok.Data;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -26,7 +27,7 @@ public class Event {
     private Integer likesCount = 0;
 
     @ManyToMany(mappedBy = "likeEvents")
-    private List<User> likedByUsers;
+    private List<User> likedByUsers =new ArrayList<>();;
 
     @ManyToMany
     @JoinTable(

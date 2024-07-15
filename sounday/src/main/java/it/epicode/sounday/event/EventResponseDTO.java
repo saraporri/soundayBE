@@ -22,4 +22,5 @@ public class EventResponseDTO {
     private UserResponseDTO artist; // Modifica per includere l'artista
     private Integer participantsCount;
     private Integer likedByUsers;
+
 }
