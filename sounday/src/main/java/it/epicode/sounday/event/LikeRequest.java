@@ -1,8 +1,10 @@
 package it.epicode.sounday.event;
 
+import lombok.Data;
+@Data // Getter and Setter
+
 public class LikeRequest { private Long userId;
 
-    // Getter and Setter
     public Long getUserId() {
         return userId;
     }

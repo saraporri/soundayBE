@@ -82,22 +82,17 @@ public class EventService {
 
     @Transactional
     public void likeEvent(Long userId, Long eventId) {
-        log.info("User with id: {} likes event with id: {}", userId, eventId);
-
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException("User not found with id: " + userId));
         Event event = eventRepository.findById(eventId)
                 .orElseThrow(() -> new EntityNotFoundException("Event not found with id: " + eventId));
 
-        if (!user.getLikeEvents().contains(event)) {
-            user.getLikeEvents().add(event);
+        if (!event.getLikedByUsers().contains(user)) {
             event.getLikedByUsers().add(user);
-            event.setLikesCount(event.getLikesCount() + 1);
+            event.setLikesCount(Optional.ofNullable(event.getLikesCount()).orElse(0) + 1);
+            user.getLikeEvents().add(event);
             userRepository.save(user);
             eventRepository.save(event);
-            log.info("User with id: {} liked event with id: {}", userId, eventId);
-        } else {
-            log.info("User with id: {} already liked event with id: {}", userId, eventId);
         }
     }
 

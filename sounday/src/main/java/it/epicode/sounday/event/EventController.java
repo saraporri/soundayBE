@@ -1,6 +1,7 @@
 package it.epicode.sounday.event;
 
 import jakarta.persistence.EntityNotFoundException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -9,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.*;
 
 @RestController
+@Slf4j
 @RequestMapping("/api/events")
 public class EventController {
     @Autowired
@@ -55,9 +57,12 @@ public class EventController {
     @PostMapping("/{eventId}/like")
     public ResponseEntity<?> likeEvent(@RequestBody LikeRequest likeRequest, @PathVariable Long eventId) {
         try {
+            log.info("User {} is liking event {}", likeRequest.getUserId(), eventId);
             eventService.likeEvent(likeRequest.getUserId(), eventId);
+            log.info("Event {} liked successfully by user {}", eventId, likeRequest.getUserId());
             return ResponseEntity.ok().body("Event liked successfully");
         } catch (EntityNotFoundException e) {
+            log.error("Error liking event: {}", e.getMessage());
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
     }

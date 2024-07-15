@@ -22,16 +22,12 @@ public class Event {
     @JoinColumn(name = "artist_id", referencedColumnName = "id")
     private User artist;
 
-    private Integer participantsCount = 0; // Default to 0
-    private Integer likesCount = 0; // Default to 0
+    private Integer participantsCount = 0;
+    private Integer likesCount = 0;
 
     @ManyToMany(mappedBy = "likeEvents")
     private List<User> likedByUsers;
 
-    // Getter and Setter for likesCount
-    public Integer getLikesCount() {
-        return likesCount;
-    }
     @ManyToMany
     @JoinTable(
             name = "event_participants",
@@ -39,13 +35,6 @@ public class Event {
             inverseJoinColumns = @JoinColumn(name = "user_id")
     )
     private List<User> participants;
-    public void setLikesCount(Integer likesCount) {
-        this.likesCount = likesCount;
-    }  public List<User> getParticipants() {
-        return participants;
-    }
 
-    public void setParticipants(List<User> participants) {
-        this.participants = participants;
-    }
+    // Getter e Setter
 }
