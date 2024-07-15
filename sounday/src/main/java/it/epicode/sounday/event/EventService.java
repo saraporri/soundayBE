@@ -116,7 +116,7 @@ public class EventService {
         if (!user.getPartecipation().contains(event)) {
             user.getPartecipation().add(event);
             event.getParticipants().add(user);
-            event.setParticipantsCount(event.getParticipantsCount() + 1);
+            event.setParticipantsCount(Optional.ofNullable(event.getParticipantsCount()).orElse(0) + 1);
             userRepository.save(user);
             eventRepository.save(event);
             log.info("User with id: {} participated in event with id: {}", userId, eventId);

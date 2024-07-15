@@ -52,8 +52,6 @@ public class EventController {
         }
     }
 
-
-
     @PostMapping("/{eventId}/like")
     public ResponseEntity<?> likeEvent(@RequestBody LikeRequest likeRequest, @PathVariable Long eventId) {
         try {
@@ -73,15 +71,15 @@ public class EventController {
         return ResponseEntity.ok(likedEvents);
     }
 
-
-
-
     @PostMapping("/{eventId}/participate")
-    public ResponseEntity<?> participateEvent(@RequestParam Long userId, @PathVariable Long eventId) {
+    public ResponseEntity<?> participateEvent(@RequestBody ParticipationRequest participationRequest, @PathVariable Long eventId) {
         try {
-            eventService.participateEvent(userId, eventId);
+            log.info("User {} is participating in event {}", participationRequest.getUserId(), eventId);
+            eventService.participateEvent(participationRequest.getUserId(), eventId);
+            log.info("Event {} participated successfully by user {}", eventId, participationRequest.getUserId());
             return ResponseEntity.ok().body("Event participation confirmed successfully");
         } catch (EntityNotFoundException e) {
+            log.error("Error participating in event: {}", e.getMessage());
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
     }

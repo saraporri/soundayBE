@@ -36,5 +36,10 @@ public class Event {
     )
     private List<User> participants;
 
+    public Event() {
+        this.participantsCount = 0; // Assicura che participantsCount sia sempre inizializzato a 0
+        this.likesCount = 0; // Assicura che likesCount sia sempre inizializzato a 0
+    }
+
     // Getter e Setter
 }
