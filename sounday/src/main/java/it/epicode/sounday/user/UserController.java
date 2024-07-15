@@ -133,4 +133,15 @@ public class UserController {
             return ResponseEntity.badRequest().body(response);
         }
     }
+
+
+
+
+
+
+    @GetMapping("/{userId}/likedArtists")
+    public ResponseEntity<List<UserResponseDTO>> getLikedArtistsByUser(@PathVariable Long userId) {
+        List<UserResponseDTO> likedArtists = user.getLikedArtistsByUser(userId);
+        return ResponseEntity.ok(likedArtists);
+    }
 }

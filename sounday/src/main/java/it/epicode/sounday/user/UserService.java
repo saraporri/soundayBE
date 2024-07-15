@@ -61,6 +61,16 @@ public class UserService {
             log.error("Authentication failed", e);
             throw new InvalidLoginException(username, password);
         }
+
+
+
+
+
+
+
+
+
+
     }
 
     public RegisteredUserDTO register(RegisterUserDTO register) {
@@ -205,10 +215,28 @@ public class UserService {
         User artist = usersRepository.findById(artistId)
                 .orElseThrow(() -> new EntityNotFoundException("Artist not found with id: " + artistId));
 
-        artist.setFollowersCount(artist.getFollowersCount() + 1);
-        usersRepository.save(artist);
+        if (!user.getLikeArtists().contains(artist)) {
+            user.getLikeArtists().add(artist);
+            usersRepository.save(user);
+        }
+    }
 
-        user.getLikeArtists().add(artist);
-        usersRepository.save(user);
+    public List<UserResponseDTO> getLikedArtistsByUser(Long userId) {
+        User user = usersRepository.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException("User not found with id: " + userId));
+        return user.getLikeArtists().stream()
+                .map(this::convertToResponseDTO)
+                .collect(Collectors.toList());
+    }
+
+    private UserResponseDTO convertToResponseDTO(User user) {
+        return UserResponseDTO.builder()
+                .id(user.getId())
+                .username(user.getUsername())
+                .email(user.getEmail())
+                .firstName(user.getFirstName())
+                .lastName(user.getLastName())
+                .role(user.getRoles().stream().map(Roles::getRoleType).findFirst().orElse(null))
+                .build();
     }
 }

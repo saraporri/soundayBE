@@ -36,11 +36,17 @@ public class User {
     private List<Event> events;
 
     @OneToMany
-    private List<Event> likeEvents;
+    private List<Event> likeEvents = new ArrayList<>();
 
     @OneToMany
-    private List<User> likeArtists;
+    private List<User> likeArtists = new ArrayList<>();
 
-    @OneToMany
-    private List<Event> partecipation;
+    @ManyToMany
+    @JoinTable(
+            name = "user_participate_event",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "event_id")
+    )
+    private List<Event> partecipation = new ArrayList<>();
+
 }
