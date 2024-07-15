@@ -9,6 +9,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -79,8 +80,10 @@ public class EventService {
         log.info("Event deleted with id: {}", id);
     }
 
+    @Transactional
     public void likeEvent(Long userId, Long eventId) {
         log.info("User with id: {} likes event with id: {}", userId, eventId);
+
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException("User not found with id: " + userId));
         Event event = eventRepository.findById(eventId)
@@ -88,10 +91,16 @@ public class EventService {
 
         if (!user.getLikeEvents().contains(event)) {
             user.getLikeEvents().add(event);
+            event.getLikedByUsers().add(user);
+            if (event.getLikesCount() == null) {
+                event.setLikesCount(0); // Inizializza likesCount se è null
+            }
             event.setLikesCount(event.getLikesCount() + 1);
             userRepository.save(user);
             eventRepository.save(event);
             log.info("User with id: {} liked event with id: {}", userId, eventId);
+        } else {
+            log.info("User with id: {} already liked event with id: {}", userId, eventId);
         }
     }
 

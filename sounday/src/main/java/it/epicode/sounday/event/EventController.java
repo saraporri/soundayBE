@@ -53,9 +53,9 @@ public class EventController {
 
 
     @PostMapping("/{eventId}/like")
-    public ResponseEntity<?> likeEvent(@RequestParam Long userId, @PathVariable Long eventId) {
+    public ResponseEntity<?> likeEvent(@RequestBody LikeRequest likeRequest, @PathVariable Long eventId) {
         try {
-            eventService.likeEvent(userId, eventId);
+            eventService.likeEvent(likeRequest.getUserId(), eventId);
             return ResponseEntity.ok().body("Event liked successfully");
         } catch (EntityNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());

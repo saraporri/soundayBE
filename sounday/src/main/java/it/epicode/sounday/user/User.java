@@ -35,7 +35,12 @@ public class User {
     @OneToMany(mappedBy = "artist")
     private List<Event> events;
 
-    @OneToMany
+    @ManyToMany
+    @JoinTable(
+            name = "user_like_events",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "event_id")
+    )
     private List<Event> likeEvents = new ArrayList<>();
 
     @OneToMany
