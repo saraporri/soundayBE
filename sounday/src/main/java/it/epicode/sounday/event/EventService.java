@@ -92,9 +92,6 @@ public class EventService {
         if (!user.getLikeEvents().contains(event)) {
             user.getLikeEvents().add(event);
             event.getLikedByUsers().add(user);
-            if (event.getLikesCount() == null) {
-                event.setLikesCount(0); // Inizializza likesCount se è null
-            }
             event.setLikesCount(event.getLikesCount() + 1);
             userRepository.save(user);
             eventRepository.save(event);
@@ -113,6 +110,7 @@ public class EventService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional
     public void participateEvent(Long userId, Long eventId) {
         log.info("User with id: {} participates in event with id: {}", userId, eventId);
         User user = userRepository.findById(userId)

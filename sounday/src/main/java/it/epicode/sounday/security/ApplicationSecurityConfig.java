@@ -55,6 +55,7 @@ public class ApplicationSecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/api/users/register").permitAll()
                         .requestMatchers(HttpMethod.GET, "/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/events/{eventId}/like").authenticated()
+                        .requestMatchers(HttpMethod.GET, "/api/events/liked").authenticated()
                         .requestMatchers(HttpMethod.POST, "/api/events").hasAuthority("ARTIST")
                         .requestMatchers(HttpMethod.PATCH, "/api/users/{id}").authenticated()
                         .requestMatchers(HttpMethod.PUT, "/api/events/update/**").hasAuthority("ARTIST")
