@@ -135,10 +135,6 @@ public class UserController {
     }
 
 
-
-
-
-
     @GetMapping("/{userId}/likedArtists")
     public ResponseEntity<List<UserResponseDTO>> getLikedArtistsByUser(@PathVariable Long userId) {
         List<UserResponseDTO> likedArtists = user.getLikedArtistsByUser(userId);
