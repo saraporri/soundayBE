@@ -239,4 +239,9 @@ public class UserService {
                 .role(user.getRoles().stream().map(Roles::getRoleType).findFirst().orElse(null))
                 .build();
     }
+
+
+    public List<User> searchArtists(String query) {
+        return usersRepository.findByUsernameContainingAndRoles_roleType(query, "ARTIST");
+    }
 }

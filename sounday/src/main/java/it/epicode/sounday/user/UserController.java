@@ -1,7 +1,10 @@
 package it.epicode.sounday.user;
 
+import it.epicode.sounday.event.Event;
+import it.epicode.sounday.event.EventService;
 import it.epicode.sounday.security.*;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -13,11 +16,13 @@ import java.util.List;
 import java.util.Map;
 import jakarta.persistence.EntityNotFoundException;
 
+
 @RestController
 @RequestMapping("/api/users")
 @RequiredArgsConstructor
 public class UserController {
-
+    @Autowired
+    private final EventService eventService;
     private final UserService user;
 
     @PostMapping("/register")
@@ -140,4 +145,13 @@ public class UserController {
         List<UserResponseDTO> likedArtists = user.getLikedArtistsByUser(userId);
         return ResponseEntity.ok(likedArtists);
     }
+
+
+
+    @GetMapping("/searchArtists")
+    public ResponseEntity<List<User>> searchArtists(@RequestParam String query) {
+        List<User> artists = user.searchArtists(query);
+        return ResponseEntity.ok(artists);
+    }
+
 }

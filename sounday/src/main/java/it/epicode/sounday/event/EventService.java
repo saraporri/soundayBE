@@ -4,12 +4,15 @@ import it.epicode.sounday.security.Roles;
 import it.epicode.sounday.user.User;
 import it.epicode.sounday.user.UserRepository;
 import it.epicode.sounday.user.UserResponseDTO;
+import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.persistence.PersistenceContext;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.transaction.annotation.Transactional;
+
 
 import java.util.List;
 import java.util.Optional;
@@ -156,5 +159,10 @@ public class EventService {
 
         log.info("Converted Event to EventResponseDTO: {}", response);
         return response;
+
+
+    }  public List<Event> searchEvents(String query) {
+        return eventRepository.findByTitleContainingIgnoreCaseOrCityContainingIgnoreCase(query, query);
     }
+
 }

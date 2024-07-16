@@ -99,5 +99,9 @@ public class EventController {
     public ResponseEntity<List<EventResponseDTO>> getParticipatedEventsByUser(@RequestParam Long userId) {
         List<EventResponseDTO> participatedEvents = eventService.getParticipatedEventsByUser(userId);
         return ResponseEntity.ok(participatedEvents);
+    }  @GetMapping("/search")
+    public ResponseEntity<List<Event>> searchEvents(@RequestParam String query) {
+        List<Event> events = eventService.searchEvents(query);
+        return ResponseEntity.ok(events);
     }
 }
