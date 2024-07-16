@@ -84,10 +84,14 @@ public class EventController {
             log.info("User {} is participating in event {}", participationRequest.getUserId(), eventId);
             eventService.participateEvent(participationRequest.getUserId(), eventId);
             log.info("Event {} participated successfully by user {}", eventId, participationRequest.getUserId());
-            return ResponseEntity.ok().body("Event participation confirmed successfully");
+            Map<String, String> response = new HashMap<>();
+            response.put("message", "Event participation confirmed successfully");
+            return ResponseEntity.ok().body(response);
         } catch (EntityNotFoundException e) {
             log.error("Error participating in event: {}", e.getMessage());
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+            Map<String, String> errorResponse = new HashMap<>();
+            errorResponse.put("error", e.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
         }
     }
 
