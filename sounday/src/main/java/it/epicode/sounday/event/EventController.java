@@ -48,15 +48,9 @@ public class EventController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Map<String, String>> deleteEvent(@PathVariable Long id) {
-        try {
-            eventService.deleteEvent(id);
-            Map<String, String> response = new HashMap<>();
-            response.put("message", "Event with id " + id + " deleted successfully");
-            return ResponseEntity.ok(response);
-        } catch (EntityNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Collections.singletonMap("error", e.getMessage()));
-        }
+    public ResponseEntity<Void> deleteEvent(@PathVariable Long id) {
+        eventService.deleteEvent(id);
+        return ResponseEntity.noContent().build();
     }
 
     @PostMapping("/{eventId}/like")

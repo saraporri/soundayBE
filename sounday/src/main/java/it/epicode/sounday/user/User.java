@@ -32,10 +32,10 @@ public class User {
 
     private Integer followersCount;
 
-    @OneToMany(mappedBy = "artist")
+    @OneToMany(mappedBy = "artist", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Event> events;
 
-    @ManyToMany
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(
             name = "user_like_events",
             joinColumns = @JoinColumn(name = "user_id"),
@@ -46,12 +46,11 @@ public class User {
     @OneToMany
     private List<User> likeArtists = new ArrayList<>();
 
-    @ManyToMany
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(
             name = "user_participate_event",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "event_id")
     )
     private List<Event> partecipation = new ArrayList<>();
-
 }

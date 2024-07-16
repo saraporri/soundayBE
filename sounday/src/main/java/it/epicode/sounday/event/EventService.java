@@ -74,13 +74,22 @@ public class EventService {
         return convertToEventResponseDTO(event);
     }
 
-    public void deleteEvent(Long id) {
-        log.info("Deleting event with id: {}", id);
-        if (!eventRepository.existsById(id)) {
-            throw new EntityNotFoundException("Event not found with id: " + id);
-        }
-        eventRepository.deleteById(id);
-        log.info("Event deleted with id: {}", id);
+    @Transactional
+    public void deleteEvent(Long eventId) {
+        // Rimuovi tutte le relazioni di like per questo evento
+        userRepository.findAll().forEach(user -> {
+            user.getLikeEvents().removeIf(event -> event.getId().equals(eventId));
+            userRepository.save(user);
+        });
+
+        // Rimuovi tutte le partecipazioni per questo evento
+        userRepository.findAll().forEach(user -> {
+            user.getPartecipation().removeIf(event -> event.getId().equals(eventId));
+            userRepository.save(user);
+        });
+
+        // Ora elimina l'evento
+        eventRepository.deleteById(eventId);
     }
 
     @Transactional
